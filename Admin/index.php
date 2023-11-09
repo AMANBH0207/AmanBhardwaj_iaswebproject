@@ -1,7 +1,5 @@
 <?php
-include('includes/header.php');
-include('includes/topbar.php');
-include('includes/sidebaar.php');
+include("includes/Admin_login.php");
 ?>
 
 <?php
