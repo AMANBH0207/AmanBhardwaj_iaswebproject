@@ -3,6 +3,14 @@ include('includes/headers.php');
 include('includes/topbar.php');
 include('includes/sidebar.php');
 ?>
+
+<?php
+require("connection1.php")
+
+?>
+
+
+
 <html lang="en">
 <head>
     <style>
@@ -157,7 +165,7 @@ include('includes/sidebar.php');
     <div class="add-question-form">
     <form method="POST" action="">
     <div class="form-container">
-        <h2>Form Example</h2>
+        <h2>Add a question</h2>
         <form action="process_form.php" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="title">Title:</label>
@@ -176,7 +184,7 @@ include('includes/sidebar.php');
 
             <div id="drop-area">
         <p>Drag & Drop images here or click to browse</p>
-        <input type="file" id="fileInput" style="display: none;">
+        <input name="img" type="file" id="fileInput" style="display: none;">
     </div>
     <div id="image-preview"></div>
 
@@ -187,7 +195,7 @@ include('includes/sidebar.php');
 
             <div class="form-group">
             <h2>Submit Date and Time:</h2>
-            <span id="currentDateTime"></span>
+            <input name="time" id="currentDateTime" readonly>
             </div>
 
             <div class="form-group">
@@ -201,7 +209,7 @@ include('includes/sidebar.php');
             </div>
 
             <div class="form-group">
-                <input type="submit" value="Submit">
+            <button name="submit" class="btn btn-success">Submit</button>
             </div>
         </form>
     </div>
@@ -210,7 +218,32 @@ include('includes/sidebar.php');
     </div>
         
 </div>
+
+
+
+
+
+
+
+<?php
+if (isset($_POST['submit'])) {
+    if ($con->connect_error) {
+        die("Connection failed: " . $con->connect_error);
+    }
+
+    $sql = "INSERT INTO `questionsanswers`(`title`, `question`, `answer`, `image`, `url`, `submit_time`, `subject`, `topic`) VALUES ('$_POST[title]','$_POST[question]','$_POST[answer]','$_POST[img]','$_POST[url]','$_POST[time]','$_POST[subject]','$_POST[topic]')";
+
+    if ($con->query($sql) === TRUE) {
+        echo "The Question Was Added Successfully";
+    } else {
+        echo "Error: " . $sql . "<br>" . $con->error;
+    }
+}
+    ?>
     </section>
+
+  
+
     <script>
         const dropArea = document.getElementById('drop-area');
         const fileInput = document.getElementById('fileInput');
@@ -260,22 +293,17 @@ include('includes/sidebar.php');
             }
         });
 
-        function updateDateTime() {
-            const currentDateTimeElement = document.getElementById('currentDateTime');
-            const currentDateTime = new Date();
+        function updateCurrentDateTime() {
+        var currentDateTime = new Date();
+        var formattedDateTime = currentDateTime.toLocaleString();
+        document.getElementById("currentDateTime").value = formattedDateTime;
+    }
 
-            // Format the date and time (example: "January 1, 2023 12:00:00 AM")
-            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-            const formattedDateTime = currentDateTime.toLocaleDateString('en-US', options);
+    // Update the current date and time every second (1000 milliseconds)
+    setInterval(updateCurrentDateTime, 1000);
 
-            // Set the formatted date and time as the content of the <span> element
-            currentDateTimeElement.textContent = formattedDateTime;
-        }
-
-        // Update the current date and time immediately and every second
-        updateDateTime();
-        setInterval(updateDateTime, 1000);
-
+    // Run the function once on page load to set the initial value
+    updateCurrentDateTime();
         function disableButton() {
             // Disable the button
             document.getElementById('myButton').disabled = true;
@@ -292,7 +320,8 @@ include('includes/sidebar.php');
             toggleForm();
         }
 
-       
+        
+
 
 
     </script>
