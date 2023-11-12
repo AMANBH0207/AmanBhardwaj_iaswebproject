@@ -163,7 +163,7 @@ require("connection1.php")
     </form>
 
     <div class="add-question-form">
-    <form method="POST" action="">
+    <form method="POST" action="" enctype="multipart/form-data">
     <div class="form-container">
         <h2>Add a question</h2>
         <form action="process_form.php" method="post" enctype="multipart/form-data">
@@ -184,7 +184,7 @@ require("connection1.php")
 
             <div id="drop-area">
         <p>Drag & Drop images here or click to browse</p>
-        <input name="img" type="file" id="fileInput" style="display: none;">
+        <input name="image" type="file" id="fileInput" style="display: none;" >
     </div>
     <div id="image-preview"></div>
 
@@ -226,12 +226,17 @@ require("connection1.php")
 
 
 <?php
-if (isset($_POST['submit'])) {
-    if ($con->connect_error) {
-        die("Connection failed: " . $con->connect_error);
-    }
+ if ($con->connect_error) {
+    die("Connection failed: " . $con->connect_error);
+}
 
-    $sql = "INSERT INTO `questionsanswers`(`title`, `question`, `answer`, `image`, `url`, `submit_time`, `subject`, `topic`) VALUES ('$_POST[title]','$_POST[question]','$_POST[answer]','$_POST[img]','$_POST[url]','$_POST[time]','$_POST[subject]','$_POST[topic]')";
+if (isset($_POST['submit'])) {
+    $image = $_FILES["image"]["tmp_name"];
+    $imageData = addslashes(file_get_contents($image));
+   
+    
+
+    $sql = "INSERT INTO `questionsanswers`(`title`, `question`, `answer`, `image`, `url`, `submit_time`, `subject`, `topic`) VALUES ('$_POST[title]','$_POST[question]','$_POST[answer]','$imageData','$_POST[url]','$_POST[time]','$_POST[subject]','$_POST[topic]')";
 
     if ($con->query($sql) === TRUE) {
         echo "The Question Was Added Successfully";
