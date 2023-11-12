@@ -79,6 +79,17 @@ require("connection1.php")
             max-height: 200px;
             margin-top: 20px;
         }
+        .success-message {
+            display: none;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            margin-top: 100px;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+        }
     </style>
     </head>
 
@@ -173,7 +184,7 @@ require("connection1.php")
             </div>
 
             <div class="form-group">
-                <label for="question">Question Text:</label>
+                <label for="question">Question:</label>
                 <textarea name="question" rows="4" required></textarea>
             </div>
 
@@ -231,15 +242,17 @@ require("connection1.php")
 }
 
 if (isset($_POST['submit'])) {
+    if (file_exists("image")){
     $image = $_FILES["image"]["tmp_name"];
     $imageData = addslashes(file_get_contents($image));
-   
+    $sql = "INSERT INTO `questionsanswers`(`title`, `question`, `answer`, `image`, `url`, `submit_time`, `subject`, `topic`) VALUES ('$_POST[title]','$_POST[question]','$_POST[answer]','$imageData','$_POST[url]','$_POST[time]','$_POST[subject]','$_POST[topic]')";
+    }
     
 
-    $sql = "INSERT INTO `questionsanswers`(`title`, `question`, `answer`, `image`, `url`, `submit_time`, `subject`, `topic`) VALUES ('$_POST[title]','$_POST[question]','$_POST[answer]','$imageData','$_POST[url]','$_POST[time]','$_POST[subject]','$_POST[topic]')";
+    $sql = "INSERT INTO `questionsanswers`(`title`, `question`, `answer`,`url`,  `submit_time`, `subject`, `topic`) VALUES ('$_POST[title]','$_POST[question]','$_POST[answer]','$_POST[url]','$_POST[time]','$_POST[subject]','$_POST[topic]')";
 
     if ($con->query($sql) === TRUE) {
-        echo "The Question Was Added Successfully";
+        echo '<div id="successMessage" class="success-message">Your operation was successful!</div>';
     } else {
         echo "Error: " . $sql . "<br>" . $con->error;
     }
@@ -250,6 +263,11 @@ if (isset($_POST['submit'])) {
   
 
     <script>
+
+
+
+
+
         const dropArea = document.getElementById('drop-area');
         const fileInput = document.getElementById('fileInput');
         const imagePreview = document.getElementById('image-preview');
@@ -328,8 +346,20 @@ if (isset($_POST['submit'])) {
         
 
 
+        
+    document.addEventListener('DOMContentLoaded', function () {
+        var successMessage = document.getElementById('successMessage');
+        successMessage.style.display = 'block'; // Show the message
 
-    </script>
+        setTimeout(function () {
+            successMessage.style.display = 'none'; // Hide the message after 5 seconds
+        }, 5000);
+    });
+</script>
+
+
+
+    
 
     </body>
 </html>

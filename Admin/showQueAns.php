@@ -27,11 +27,15 @@ require("connection1.php")
         main {
             max-width: 800px;
             margin: 20px auto;
-            padding: 20px;
+            padding: 5px;
         }
 
         .question {
             border-bottom: 1px solid #ccc;
+            padding: 2px;
+        }
+
+        li{
             padding: 2px;
         }
 
@@ -60,7 +64,7 @@ require("connection1.php")
             // Display questions
             while ($row = $result->fetch_assoc()) {
                 echo '<div class="question">';
-                echo '<h2><a href="' . $row['url'] . '">' . $row['title'] . '</a></h2>';
+                echo "<li><a href='DisplayQuestion.php?url={$row['url']}'>{$row['title']}</a></li>";
                 echo '</div>';
             }
 
